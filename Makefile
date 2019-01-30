@@ -2,6 +2,8 @@ SERVICE_NAME=hello-nginx
 SERVICE_VERSION_FILE=./version.txt
 GIT_BRANCH_NAME=$(shell git rev-parse --abbrev-ref HEAD | tr "/" "-")
 GIT_COMMIT_HASH=$(shell git rev-parse HEAD | cut -c 1-8)
+GIT_REMOTE_ORIGIN_URL=$(shell git config --get remote.origin.url)
+GIT_REMOTE_COMMIT_URL=$(GIT_REMOTE_ORIGIN_URL:.git=)/commit/$(GIT_COMMIT_HASH)
 SERVICE_BUILD_TIME=$(shell date -u +"%Y-%m-%dT%H.%M.%SZ")
 SERVICE_VERSION ?=$(shell cat $(SERVICE_VERSION_FILE))
 PWD=$(shell pwd)
@@ -69,11 +71,13 @@ app.clean: version.clean
 ## app.build   : clean and build (jar, docker)
 app.build: guard-SERVICE_VERSION
 	@echo "build start: service $(SERVICE_NAME) version $(SERVICE_VERSION) --> docker-tag $(DOCKER_APP_TAG_LOCAL)"
+	@echo "git commit url: $(GIT_REMOTE_COMMIT_URL)"
 	#@echo "clean: you may want to add ./gradlew build here"
 	@echo "$(SERVICE_VERSION)" > docker/app/version.txt
 	docker build -t $(DOCKER_APP_TAG_LOCAL) -f $(DOCKER_APP_DOCKERFILE) .
 	@echo "- docker build: complete"
 	@echo "build complete: service $(SERVICE_NAME) version $(SERVICE_VERSION) --> docker-tag $(DOCKER_APP_TAG_LOCAL)"
+	@echo "git commit url: $(GIT_REMOTE_COMMIT_URL)"
 ## app.clean-build   : build (jar, docker) - without tests
 app.clean-build: app.clean version.generate app.build
 ## app.push   : push image to registry
@@ -81,6 +85,7 @@ app.push: guard-SERVICE_VERSION guard-DOCKER_USER guard-DOCKER_PASSWORD
 	$(eval DOCKER_APP_TAG_REMOTE := "$(DOCKER_APP_REPOSITORY_FULLNAME):$(SERVICE_VERSION)")
 	@echo "PUSH start: service $(SERVICE_NAME) version $(SERVICE_VERSION) --> docker-tag $(DOCKER_APP_TAG_REMOTE)"
 	@echo "docker-tag: tag-local: $(DOCKER_APP_TAG_LOCAL) -> tag-remote: $(DOCKER_APP_TAG_REMOTE) ..."
+	@echo "git commit url: $(GIT_REMOTE_COMMIT_URL)"
 	docker tag $(DOCKER_APP_TAG_LOCAL) $(DOCKER_APP_TAG_REMOTE)
 	docker login $(DOCKER_APP_REGISTRY) -u $(DOCKER_USER) -p $(DOCKER_PASSWORD)
 	docker push $(DOCKER_APP_TAG_REMOTE)
@@ -98,5 +103,7 @@ playground.down: guard-SERVICE_VERSION
 ## playground.down.v   : stop compose stack "playground" and remove volumes
 playground.down.v: guard-SERVICE_VERSION
 	make docker-compose.down.v DOCKER_COMPOSE_CONCERN=playground APP_IMAGE_TAG=$(DOCKER_APP_TAG_LOCAL)
+
+
 
 
