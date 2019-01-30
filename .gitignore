@@ -1,0 +1,23 @@
+### osx
+.DS_STORE
+
+### idea, gradle
+.idea/
+*.iml
+
+.gradle/
+**/build/**
+**/out/**
+
+
+### custom
+**/version.txt
+**/src/main/generated/**
+
+### secrets
+secrets.yaml
+secrets.json
+secrets.sh
+
+
+

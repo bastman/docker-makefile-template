@@ -1,0 +1,13 @@
+version: '3.4'
+services:
+
+  hello-nginx-playground-web:
+    image: "${APP_IMAGE_TAG}"
+    ports:
+    - "80:80"
+    networks:
+    - hello-nginx-playground-network
+    command: ["nginx", "-g", "daemon off;"]
+
+networks:
+  hello-nginx-playground-network: {}

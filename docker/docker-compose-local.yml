@@ -1,0 +1,13 @@
+version: '3.4'
+services:
+
+  hello-nginx-local-web:
+    image: "${APP_IMAGE_TAG}"
+    ports:
+      - "80:80"
+    networks:
+      - hello-nginx-local-network
+    command: ["nginx", "-g", "daemon off;"]
+
+networks:
+  hello-nginx-local-network: {}
