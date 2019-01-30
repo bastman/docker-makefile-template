@@ -8,7 +8,9 @@ Example: a simple nginx-alpine based image
 
 - tag: {{REPO}}:{{BUILD_TIME}}:{{GIT_COMMIT_HASH}}-{{GIT_BRANCH}}
 ```
-    e.g: hello-nginx:2019-01-30T09.21.19Z-b8210db9-master
+    e.g: hello-nginx:2019-01-30T09.34.34Z-0a53ce69-master
+    
+    ... build from commit: https://github.com/bastman/docker-makefile-template/commit/0a53ce69
 ```    
 
 ```
